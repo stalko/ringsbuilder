@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://unpkg.com/konva@2.4.2/konva.min.js"></script>
+	<title>Rings</title>
+	<style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .split {
+	  height: 100%;
+	  position: fixed;
+	  z-index: 1;
+	  top: 0;
+	  overflow-x: hidden;
+	  padding-top: 20px;
+	}
+
+	.left {
+	  width: 20%;
+	  left: 0;
+	  background-color: rgb(206, 248, 255);
+	}
+
+	.right {
+	  width: 80%;
+	  right: 0;
+	}
+
+	.centered {
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	  text-align: center;
+	}
+	</style>
+</head>
+<body>
+
+	<div class="split left">
+	  <div class="centered">
+		<input type="button" name="draw" value="Draw" onclick="Draw()" style="background-color: green;">
+		<input type="button" name="clear" value="Clear" onclick="stage.clear()" style="background-color: red;">
+		<input type="button" name="save" value="Save" onclick="saveLikePNG()" style="background-color: yellow;">
+		<br/>
+		<br/>
+	  	Count rings: <input type="number" id="countRings" value="16" style="width: 40px;" onchange="Draw()"><br/>
+		Radius: <input type="number" id="radius" value="400" style="width: 40px;" onchange="Draw()"><br/>
+		Radius of rings: <input type="number" id="radiusOfRings" style="width: 40px;" value="40" onchange="Draw()"><br/>
+		Font size: <input type="number" id="fontSize" style="width: 40px;" value="50" onchange="Draw()"><br/>
+		Stroke width: <input type="number" id="strokeWidth" style="width: 40px;" value="2" onchange="Draw()"><br/>
+		<br/>
+		lines 1:<br/><textarea id="lines1" cols="10" rows="10">1=11&#13;&#10;2=10</textarea>
+		<br/>
+		lines 2:<br/><textarea id="lines2" cols="10" rows="10"></textarea>
+		<br/>
+		lines 3:<br/><textarea id="lines3" cols="10" rows="10"></textarea>
+		<br/>
+		lines 4:<br/><textarea id="lines4" cols="10" rows="10"></textarea>
+		
+	  </div>
+	</div>
+
+	<div class="split right">
+	  <div class="centered">
+	  	<div id="container" style="background-color: white;"></div>
+	  </div>
+	</div>
+
+	
+	    	
+	
+	<script>
+		// Retrieve your data from locaStorage
+		// var saveData = JSON.parse(localStorage.saveData || null) || {};
+
+		// if(saveData.obj){
+		// 	document.getElementById('countRings').value = saveData.obj.countRings
+		// 	document.getElementById('radius').value = saveData.obj.r
+		// 	document.getElementById('radiusOfRings').value = saveData.obj.radiusOfRings
+		// 	document.getElementById('fontSize').value = saveData.obj.fontSize
+		// 	document.getElementById('strokeWidth').value = saveData.obj.strokeWidth
+		// }
+
+	    var width = window.innerWidth;
+	    var height = window.innerHeight;
+
+	    var stage = new Konva.Stage({
+	        container: 'container',
+	        width: width,
+	        height: height,
+	        fill: 'white',
+	    });
+
+	    const _fi = 360
+	    
+
+	    function Draw(){
+	    	stage.clear()
+	    	var ringsArray = []
+	    	countRings = parseInt(document.getElementById('countRings').value)
+	    	r = parseInt(document.getElementById('radius').value)
+	    	radiusOfRings = parseInt(document.getElementById('radiusOfRings').value)
+	    	fontSize = parseInt(document.getElementById('fontSize').value)
+	    	strokeWidth = parseInt(document.getElementById('strokeWidth').value)
+
+	    	for(var i=0; i<countRings;i++){
+	    		xNew = stage.getWidth() / 2+r*Math.cos(2*Math.PI*i/countRings)
+				yNew = stage.getHeight() / 2+r*Math.sin(2*Math.PI*i/countRings)
+	    		var id=i+1
+			    ringsArray.push({x:xNew,y:yNew,id:id})
+	    	}
+
+			stage.add(drawLines(ringsArray,"lines1",[]));
+			stage.add(drawLines(ringsArray,"lines2",[33, 10]));
+			stage.add(drawLines(ringsArray,"lines3",[29, 10, 5, 10]));
+			stage.add(drawLines(ringsArray,"lines4",[5, 10, 5, 10]));
+
+		    stage.add(drawRings(ringsArray));
+
+		 //    saveData.obj = {
+		 //    	countRings:countRings,
+		 //    	r:r,
+		 //    	radiusOfRings:radiusOfRings,
+		 //    	fontSize:fontSize,
+		 //    	strokeWidth:strokeWidth,
+		 //    };
+
+			// saveData.time = new Date().getTime();
+			// localStorage.saveData = JSON.stringify(saveData);
+	    }
+
+	    function drawLines(ringsArray,linesName,dash){
+	    	var layer = new Konva.Layer();
+
+	    	var lines = document.getElementById(linesName).value.split("\n");
+	    	for (var i = 0; i< lines.length; i++) {
+	    		if (lines[i]==="") continue;
+	    		var pair = lines[i].split("=")
+	    		var from = ringsArray.find(x => x.id === parseInt(pair[0]));
+	    		if (!from) continue;
+	    		var to = ringsArray.find(x => x.id === parseInt(pair[1]));
+				if (!to) continue;
+
+	    		var blackLine = new Konva.Line({
+			      	points: [from.x, from.y, to.x, to.y],
+			      	stroke: 'black',
+			      	strokeWidth: strokeWidth,
+			     	lineJoin: 'round',
+      				dash: dash
+			    });
+				layer.add(blackLine);
+	    	}
+	    	return layer
+	    }
+
+	    function drawRings(ringsArray){
+	    	var layer = new Konva.Layer();
+	    	for (var i = 0; i< ringsArray.length; i++){
+
+				var ring = new Konva.Ring({
+			      x: ringsArray[i].x,
+			      y: ringsArray[i].y,
+			      innerRadius: radiusOfRings,
+			      stroke: 'black',
+			      fill: 'white',
+			      strokeWidth: strokeWidth
+			    });
+
+		    	// add the shape to the layer
+		    	layer.add(ring);
+
+
+		    	var text = new Konva.Text({
+			      x: ringsArray[i].x-radiusOfRings,
+			      y: ringsArray[i].y-radiusOfRings,
+			      text: ringsArray[i].id,
+			      height:radiusOfRings*2,
+			      width:radiusOfRings*2,
+			      fontSize: fontSize,
+			      fontFamily: 'Calibri',
+			      align:'center',
+  				  verticalAlign: 'middle'
+			    });
+
+			    layer.add(text);
+			}
+			return layer
+	    }
+
+	    function saveLikePNG(){
+	    	var dataURL = stage.toDataURL();
+            downloadURI(dataURL, 'rings.png');
+	    }
+
+	    function downloadURI(uri, name) {
+            var link = document.createElement("a");
+            link.download = name;
+            link.href = uri;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            delete link;
+        }
+	  </script>
+</body>
+</html>
