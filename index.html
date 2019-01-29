@@ -83,6 +83,12 @@
 			document.getElementById('radiusOfRings').value = saveData.obj.radiusOfRings
 			document.getElementById('fontSize').value = saveData.obj.fontSize
 			document.getElementById('strokeWidth').value = saveData.obj.strokeWidth
+
+
+			document.getElementById("lines1").value = saveData.obj.lines1
+		    document.getElementById("lines2").value = saveData.obj.lines2
+		    document.getElementById("lines3").value = saveData.obj.lines3
+		    document.getElementById("lines4").value = saveData.obj.lines4
 		}
 
 	    var width = window.innerWidth;
@@ -140,6 +146,10 @@
 		    	radiusOfRings:radiusOfRings,
 		    	fontSize:fontSize,
 		    	strokeWidth:strokeWidth,
+		    	lines1:document.getElementById("lines1").value,
+		    	lines2:document.getElementById("lines2").value,
+		    	lines3:document.getElementById("lines3").value,
+		    	lines4:document.getElementById("lines4").value
 		    };
 
 			saveData.time = new Date().getTime();
