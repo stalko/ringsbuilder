@@ -43,7 +43,7 @@
 	<div class="split left">
 	  <div class="centered">
 		<input type="button" name="draw" value="Draw" onclick="Draw()" style="background-color: green;">
-		<input type="button" name="clear" value="Clear" onclick="stage.clear()" style="background-color: red;">
+		<input type="button" name="clear" value="Clear" onclick="Clear()" style="background-color: red;">
 		<input type="button" name="save" value="Save" onclick="saveLikePNG()" style="background-color: yellow;">
 		<br/>
 		<br/>
@@ -75,15 +75,15 @@
 	
 	<script>
 		// Retrieve your data from locaStorage
-		// var saveData = JSON.parse(localStorage.saveData || null) || {};
+		var saveData = JSON.parse(localStorage.saveData || null) || {};
 
-		// if(saveData.obj){
-		// 	document.getElementById('countRings').value = saveData.obj.countRings
-		// 	document.getElementById('radius').value = saveData.obj.r
-		// 	document.getElementById('radiusOfRings').value = saveData.obj.radiusOfRings
-		// 	document.getElementById('fontSize').value = saveData.obj.fontSize
-		// 	document.getElementById('strokeWidth').value = saveData.obj.strokeWidth
-		// }
+		if(saveData.obj){
+			document.getElementById('countRings').value = saveData.obj.countRings
+			document.getElementById('radius').value = saveData.obj.r
+			document.getElementById('radiusOfRings').value = saveData.obj.radiusOfRings
+			document.getElementById('fontSize').value = saveData.obj.fontSize
+			document.getElementById('strokeWidth').value = saveData.obj.strokeWidth
+		}
 
 	    var width = window.innerWidth;
 	    var height = window.innerHeight;
@@ -97,7 +97,13 @@
 	    var layer = new Konva.Layer();
 
 	    const _fi = 360
-	    
+	    	
+	    function Clear(){
+	    	stage.clear()
+	    	stage.clearCache()
+	    	layer.destroy()
+	    	layer = new Konva.Layer();
+	    }
 
 	    function Draw(){
 	    	stage.clear()
@@ -127,16 +133,17 @@
 		    drawRings(ringsArray);
 
 			stage.add(layer)
-		 //    saveData.obj = {
-		 //    	countRings:countRings,
-		 //    	r:r,
-		 //    	radiusOfRings:radiusOfRings,
-		 //    	fontSize:fontSize,
-		 //    	strokeWidth:strokeWidth,
-		 //    };
 
-			// saveData.time = new Date().getTime();
-			// localStorage.saveData = JSON.stringify(saveData);
+		    saveData.obj = {
+		    	countRings:countRings,
+		    	r:r,
+		    	radiusOfRings:radiusOfRings,
+		    	fontSize:fontSize,
+		    	strokeWidth:strokeWidth,
+		    };
+
+			saveData.time = new Date().getTime();
+			localStorage.saveData = JSON.stringify(saveData);
 	    }
 
 	    function drawLines(ringsArray,linesName,dash){
