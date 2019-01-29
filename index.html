@@ -102,7 +102,9 @@
 	    function Draw(){
 	    	stage.clear()
 	    	stage.clearCache()
-	    	layer.clear()
+	    	layer.destroy()
+	    	layer = new Konva.Layer();
+	    	stage.clearCache()
 	    	var ringsArray = []
 	    	countRings = parseInt(document.getElementById('countRings').value)
 	    	r = parseInt(document.getElementById('radius').value)
@@ -117,13 +119,14 @@
 			    ringsArray.push({x:xNew,y:yNew,id:id})
 	    	}
 
-			stage.add(drawLines(ringsArray,"lines1",[]));
-			stage.add(drawLines(ringsArray,"lines2",[33, 10]));
-			stage.add(drawLines(ringsArray,"lines3",[29, 10, 5, 10]));
-			stage.add(drawLines(ringsArray,"lines4",[5, 10, 5, 10]));
+			drawLines(ringsArray,"lines1",[]);
+			drawLines(ringsArray,"lines2",[33, 10]);
+			drawLines(ringsArray,"lines3",[29, 10, 5, 10]);
+			drawLines(ringsArray,"lines4",[5, 10, 5, 10]);
 
-		    stage.add(drawRings(ringsArray));
+		    drawRings(ringsArray);
 
+			stage.add(layer)
 		 //    saveData.obj = {
 		 //    	countRings:countRings,
 		 //    	r:r,
@@ -156,23 +159,21 @@
 			    });
 				layer.add(blackLine);
 	    	}
-	    	return layer
 	    }
 
 	    function drawRings(ringsArray){
 	    	for (var i = 0; i< ringsArray.length; i++){
-
-				var ring = new Konva.Ring({
+	    		var circle = new Konva.Circle({
 			      x: ringsArray[i].x,
 			      y: ringsArray[i].y,
-			      innerRadius: radiusOfRings,
-			      stroke: 'black',
+			      radius: radiusOfRings,
 			      fill: 'white',
+			      stroke: 'black',
 			      strokeWidth: strokeWidth
 			    });
 
 		    	// add the shape to the layer
-		    	layer.add(ring);
+		    	layer.add(circle);
 
 
 		    	var text = new Konva.Text({
@@ -189,7 +190,6 @@
 
 			    layer.add(text);
 			}
-			return layer
 	    }
 
 	    function saveLikePNG(){
