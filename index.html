@@ -94,12 +94,15 @@
 	        height: height,
 	        fill: 'white',
 	    });
+	    var layer = new Konva.Layer();
 
 	    const _fi = 360
 	    
 
 	    function Draw(){
 	    	stage.clear()
+	    	stage.clearCache()
+	    	layer.clear()
 	    	var ringsArray = []
 	    	countRings = parseInt(document.getElementById('countRings').value)
 	    	r = parseInt(document.getElementById('radius').value)
@@ -134,7 +137,6 @@
 	    }
 
 	    function drawLines(ringsArray,linesName,dash){
-	    	var layer = new Konva.Layer();
 
 	    	var lines = document.getElementById(linesName).value.split("\n");
 	    	for (var i = 0; i< lines.length; i++) {
@@ -158,7 +160,6 @@
 	    }
 
 	    function drawRings(ringsArray){
-	    	var layer = new Konva.Layer();
 	    	for (var i = 0; i< ringsArray.length; i++){
 
 				var ring = new Konva.Ring({
